@@ -1,0 +1,19 @@
+body {
+    background-color:rgb(212, 205, 218);
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+canvas {
+    background: white;
+    border: 1px solid #aaa;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
