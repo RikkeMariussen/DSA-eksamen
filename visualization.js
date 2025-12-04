@@ -3,21 +3,21 @@ export const ctx = canvas.getContext("2d");
 
 //Setting the nodes value(id) and their places on the graph
 export const nodes = [
-    {id: "A", x: 100, y: 100},
-    {id: "B", x: 300, y: 80},
-    {id: "C", x: 500, y: 150},
-    {id: "D", x: 150, y: 300},
-    {id: "E", x: 400, y: 320}
+    { id: "A", x: 100, y: 100 },
+    { id: "B", x: 300, y: 80 },
+    { id: "C", x: 500, y: 150 },
+    { id: "D", x: 150, y: 300 },
+    { id: "E", x: 400, y: 320 }
 ];
 
 //Setting the lines between the nodes, and which nodes and the weight between them
 export const edges = [
-    {from: "A", to: "B", weight: 4},
-    {from: "A", to: "D", weight: 2},
-    {from: "B", to: "C", weight: 5},
-    {from: "D", to: "E", weight: 7},
-    {from: "B", to: "E", weight: 10},
-    {from: "C", to: "E", weight: 3}
+    { from: "A", to: "B", weight: 4 },
+    { from: "A", to: "D", weight: 2 },
+    { from: "B", to: "C", weight: 5 },
+    { from: "D", to: "E", weight: 7 },
+    { from: "B", to: "E", weight: 10 },
+    { from: "C", to: "E", weight: 3 }
 ];
 
 //Making the graph with the nodes and edges
@@ -27,14 +27,14 @@ nodes.forEach(n => {
     graph[n.id] = [];
 });
 edges.forEach(e => {
-    graph[e.from].push({node: e.to, weight: e.weight});
-    graph[e.to].push({node: e.from, weight: e.weight});
+    graph[e.from].push({ node: e.to, weight: e.weight });
+    graph[e.to].push({ node: e.from, weight: e.weight });
 });
 
 
 export function drawGraph(highlight = {}) {
     //Drawing a rectangle that starts at 0,0 on x, y and has the width and height given in index.html
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     //Finding where the edges in the graph is and drawing it, for each of edges
     edges.forEach(e => {
@@ -55,6 +55,7 @@ export function drawGraph(highlight = {}) {
         //Now we draw the weight from "from" to "to", in the middle of the line
         const middleX = (a.x + b.x)/2;
         const middleY = (a.y + b.y)/2;
+        ctx.fillStyle = "black";
         ctx.fillText(e.weight, middleX, middleY);
     });
 
@@ -62,11 +63,11 @@ export function drawGraph(highlight = {}) {
     nodes.forEach(n => {
         ctx.beginPath();
         //Setting the fillstyle, as we wish to highlight the node we are currently on in our visualization
-        ctx.fillStyle = highlight.node == n ? "yellow" : "lightyellow";
+        ctx.fillStyle = highlight.node == n.id ? "yellow" : "lightyellow";
         ctx.strokeStyle = "black";
         //Making the shape a circle to indicate that this is the node
         //arc needs: x, y, radius, start angle and end angle
-        ctx.arc(n.x, n.y, 20, 0, Math.PI*2);
+        ctx.arc(n.x, n.y, 20, 0, Math.PI * 2);
         //Fill colours the cirle, and stroke draws in what we just coded, on top of what else is drawn
         ctx.fill();
         ctx.stroke();
@@ -78,18 +79,52 @@ export function drawGraph(highlight = {}) {
     });
 }
 
+function formatDistance(d) {
+    return d === Infinity ? "∞" : String(d);
+}
+
+export function updateTable(dist, prev, currentId = null) {
+    const tbody = document.querySelector("#dijkstraTable tbody");
+    tbody.innerHTML = ""; // clear old rows
+
+    // Keep the nodes order consistent with nodes[] order
+    for (const n of nodes) {
+        const tr = document.createElement("tr");
+        tr.dataset.nodeId = n.id;
+        if (n.id === currentId) tr.classList.add("current");
+
+        const tdNode = document.createElement("td");
+        tdNode.textContent = n.id;
+
+        const tdDist = document.createElement("td");
+        tdDist.textContent = formatDistance(dist[n.id]);
+
+        const tdPrev = document.createElement("td");
+        tdPrev.textContent = prev[n.id] === null ? "—" : prev[n.id];
+
+        tr.appendChild(tdNode);
+        tr.appendChild(tdDist);
+        tr.appendChild(tdPrev);
+        tbody.appendChild(tr);
+    }
+}
+
 //Call the function - which is shown as we call the script in the index.html
 drawGraph();
+updateTable(Object.fromEntries(nodes.map(n => [n.id, Infinity])), Object.fromEntries(nodes.map(n => [n.id, null])));
 
 //Calling the graph to highlight the appropriate node
 export function highlightNode(id) {
-    drawGraph({node: id});
+    drawGraph({ node: id });
+
+    const rows = document.querySelectorAll("#dijkstraTable tbody tr");
+    rows.forEach(r => r.classList.toggle("current", r.dataset.nodeId === id));
 }
 
 
 //Calling the graph to highlight the appropriate edge
 export function highlightEdge(edge) {
-    drawGraph({edge});
+    drawGraph({ edge });
 }
 
 //We also need to make sure that this visualization is not over before our eyes can register it, so we need a sleep function

@@ -1,9 +1,23 @@
-import { nodes, edges, graph, drawGraph, highlightNode, highlightEdge, sleep } from "./visualization.js"
+import { drawGraph, highlightNode, highlightEdge, graph, nodes, edges, sleep, updateTable } from "./visualization.js"
 
 //The function for the algorithm will first run when the button is pressed, and our start node is "A"
-document.getElementById("runBtn").addEventListener("click", ()=>{dijkstra("A")});
+/*document.getElementById("runBtn").addEventListener("click", () => {
+    dijkstra("A");
+});*/
 
-function dijkstra(start){
+const runBtn = document.getElementById("runBtn");
+const startSelect = document.getElementById("startSelect");
+runBtn.addEventListener("click", async () => {
+    // disable the button while running
+    runBtn.disabled = true;
+    startSelect.disabled = true;
+    const start = startSelect.value;
+    await dijkstra(start);
+    runBtn.disabled = false;
+    startSelect.disabled = false;
+});
+
+async function dijkstra(start){
     //First we set the variables, distance (dist), previous node(prev) and the array for shortest route (shortRoute). The shortRoute array is to keep track of the order of nodes that are shortest 
     const dist = {};
     const prev = {};
@@ -12,23 +26,25 @@ function dijkstra(start){
     //As we are in the beginning of the algorithm, we do not know the distances or what node is after which, for therefor each node's distance is infinite and the prev is null
     nodes.forEach(n => {
         dist[n.id] = Infinity;
-        previousNode[n.id] = null;
+        prev[n.id] = null;
     });
 
     //We do know that the starting distance is 0 - because we have not moved from the starting point
     dist[start] = 0;
     //We add the starting point to the shortRoute
-    shortRoute.push({id: start, dist: 0});
+    shortRoute.push({ id: start, dist: 0 });
 
     //Now we need to check each node and its belonging edges, to check if it is shorter than its alternative routes
     //As long as the length (amount of objects) in shortRoute is more than 0 we stay in the while loop
-    while(shortRoute.length>0) {
+    while(shortRoute.length > 0) {
         shortRoute.sort((a, b) => a.dist - b.dist);
         //Shift removes the first item in the array, but in order to look at the item, we store it in u
         const u = shortRoute.shift();
         //Because we just looked/is looking at u, we want to highlight it
         highlightNode(u.id);
-        //And now we need to wait abit, so our human eyes can register what is happening
+
+        updateTable(dist, prev, u.id);
+        //And now we need to wait a bit, so our human eyes can register what is happening
         await sleep(700);
 
         //Now we need to check each of the neighbors at the current node we are looking at, u
@@ -41,7 +57,8 @@ function dijkstra(start){
                 //The previous node for the node we will look at next, is the node we are currently looking at
                 prev[neighbor.node] = u.id;
                 //As this route is found to be shorter than already was put in as the u.ids neighbor, we need to push this neighboring node to our route
-                shortRoute.push({id: neighbor.node, dist: newDist});
+                shortRoute.push({ id: neighbor.node, dist: newDist });
+
                 //And now we need to find the edges that we want to highlight, which is from the u.id to the neighboring node
                 const edge = edges.find(e =>
                     (e.from == u.id && e.to == neighbor.node) ||
@@ -49,12 +66,19 @@ function dijkstra(start){
                 );
 
                 highlightEdge(edge);
+
+                updateTable(dist, prev, neighbor.node);
                 //As we want the users to be able to register the highlights, we wait 700 ms
                 await sleep(700);
+
+                highlightNode(neighbor.node);
+                await sleep(250);
             }
-            //If the newDist is NOT smaller than the current dist+weight, we will just go to the next node in our for each loop
+        //If the newDist is NOT smaller than the current dist+weight, we will just go to the next node in our for each loop
         }
     }
 
-    return {dist, prev};
+    updateTable(dist, prev);
+
+    return { dist, prev };
 }
