@@ -1,19 +1,71 @@
 body {
-    background-color:rgb(212, 205, 218);
+    background-color: rgb(212, 205, 218);
     text-align: center;
     margin: 0;
     padding: 20px;
+    font-family: Arial;
 }
 
 canvas {
     background: white;
-    border: 1px solid #aaa;
+    border: 1px solid lightgray;
     margin-top: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.controls {
+    margin-bottom: 8px;
 }
 
 button {
-    padding: 10px;
+    padding: 4px;
     font-size: 16px;
-    margin-top: 20px;
-    cursor: pointer;
+    margin-left: 10px;
+    border-radius: 5px;
+    border-color: black;
+}
+
+select {
+    padding: 4px;
+    font-size: 16px;
+    margin-left: 8px;
+    border-radius: 5px;
+    border-color: black;
+}
+
+.main {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 12px;
+}
+
+/* Table styling */
+#dijkstraTable {
+    border-collapse: collapse;
+    min-width: 220px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+#dijkstraTable th,
+#dijkstraTable td {
+    border: 1px solid beige;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+#dijkstraTable thead th {
+    background: white;
+}
+
+/* Highlight the currently inspected node's row, and makes the font appear "bold" */
+#dijkstraTable tbody tr.current {
+    background: lightyellow;
+    font-weight: 600;
+}
+
+/* Make the distance column monospace to align Infinity symbol nicely, and also make the infinity symbol "pretty" */
+#dijkstraTable td:nth-child(2) {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
 }

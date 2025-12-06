@@ -1,15 +1,42 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualization of Dijkstras algorithm</title>
-    <link rel="stylesheet" href="style.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualization of Dijkstra's algorithm</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Visualization of Dijkstras algorithm</h1>
-    <canvas id="graphCanvas" width="800" height="600"></canvas>
-    <button id="runBtn">Start</button>
+    <h1>Welcome to a visualization of Dijkstra's algorithm</h1>
+
+    <div class="controls">
+        <label for="startSelect">Start node:</label>
+        <select id="startSelect">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+        </select>
+        <button id="randomizeBtn">Randomize Nodes</button>
+        <button id="runBtn">Start</button>
+    </div>
+
+    <div class="main">
+        <canvas id="graphCanvas" width="800" height="600"></canvas>
+
+        <!-- Table to show node, distance and previous node -->
+        <table id="dijkstraTable">
+            <thead>
+                <tr>
+                    <th>Node</th>
+                    <th>Distance</th>
+                    <th>Previous</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
     <script type="module" src="visualization.js"></script>
     <script type="module" src="script.js"></script>
 </body>

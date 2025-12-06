@@ -1,8 +1,29 @@
-import { drawGraph, highlightNode, highlightEdge, graph, nodes, edges, sleep } from "./visualization.js"
+import { drawGraph, highlightNode, highlightEdge, graph, nodes, edges, sleep, updateTable, randomizeGraph } from "./visualization.js"
 
 //The function for the algorithm will first run when the button is pressed, and our start node is "A"
-document.getElementById("runBtn").addEventListener("click", () => {
+/*document.getElementById("runBtn").addEventListener("click", () => {
     dijkstra("A");
+});*/
+
+const runBtn = document.getElementById("runBtn");
+const randomizeBtn = document.getElementById("randomizeBtn");
+const startSelect = document.getElementById("startSelect");
+
+runBtn.addEventListener("click", async () => {
+    //Disable the buttons while running, so it does not interfere with anything
+    runBtn.disabled = true;
+    startSelect.disabled = true;
+    randomizeBtn.disabled = true;
+    const start = startSelect.value;
+    await dijkstra(start);
+    //When the code is done running, the buttons are turned on again, so we can run it again or randomize the placements/weights or choose a different starting point
+    runBtn.disabled = false;
+    startSelect.disabled = false;
+    randomizeBtn.disabled = false;
+});
+
+randomizeBtn.addEventListener("click", () => {
+    randomizeGraph();
 });
 
 async function dijkstra(start){
@@ -30,8 +51,10 @@ async function dijkstra(start){
         const u = shortRoute.shift();
         //Because we just looked/is looking at u, we want to highlight it
         highlightNode(u.id);
+
+        updateTable(dist, prev, u.id);
         //And now we need to wait a bit, so our human eyes can register what is happening
-        await sleep(700);
+        await sleep(1000);
 
         //Now we need to check each of the neighbors at the current node we are looking at, u
         for(const neighbor of graph[u.id]) {
@@ -51,13 +74,22 @@ async function dijkstra(start){
                     (e.to == u.id && e.from == neighbor.node)
                 );
 
+                //We want to highlight the edge the algorithm, is currently looking at and determines the weight for
                 highlightEdge(edge);
-                //As we want the users to be able to register the highlights, we wait 700 ms
+
+                updateTable(dist, prev, neighbor.node);
+                //As we want the users to be able to register the highlights, we wait 1000 ms/1 second
+                await sleep(1000);
+
+                highlightNode(neighbor.node);
                 await sleep(700);
             }
         //If the newDist is NOT smaller than the current dist+weight, we will just go to the next node in our for each loop
         }
     }
+
+    //We want the table to update during the run of the algorithm, so we can se what is happening besides the highlights.
+    updateTable(dist, prev);
 
     return { dist, prev };
 }
