@@ -1,10 +1,5 @@
 import { drawGraph, highlightNode, highlightEdge, graph, nodes, edges, sleep, updateTable, randomizeGraph } from "./visualization.js"
 
-//The function for the algorithm will first run when the button is pressed, and our start node is "A"
-/*document.getElementById("runBtn").addEventListener("click", () => {
-    dijkstra("A");
-});*/
-
 const runBtn = document.getElementById("runBtn");
 const randomizeBtn = document.getElementById("randomizeBtn");
 const startSelect = document.getElementById("startSelect");
