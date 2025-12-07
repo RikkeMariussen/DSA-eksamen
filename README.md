@@ -1,4 +1,4 @@
-# Datastrukturer og algoritmer - Dijkstras algoritme for at finde den korteste vej i en graf
+# Dijkstras algoritme for at finde den korteste vej i en graf
 Eksamensprojekt for valgfaget Datastrukturer og algoritmer, Datamatiker uddannelsen på Erhvervsakademiet København, Lyngby Campus.
 
 ![Photo of visualization](/images/koerendeApplikation.png "Photo of visualization")
